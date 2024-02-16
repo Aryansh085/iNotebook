@@ -5,6 +5,7 @@ router.get("/", (req,res)=>{
     obj={
         Loc:"Notes page"
     }
+    console.log(req.body)
     res.json(obj);
 })
 
