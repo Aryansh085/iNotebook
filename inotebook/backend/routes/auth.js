@@ -4,7 +4,7 @@ const { body, validationResult } = require("express-validator");
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require("jsonwebtoken");
-
+var fetchuser = require("../middleware/fetchuser")
 const JWT_SECRET = "Aryansh@anshu";
 
 
@@ -78,6 +78,17 @@ router.post("/login",[
         return res.status(200).json({token})
     }catch(err){
         return res.status(500).send({error:"Some internal server error occured"})
+    }
+})
+
+
+router.get("/getuser",fetchuser,async(req,res)=>{
+    try{
+        const userId = "todo";
+        const user = await User.findOne({email:req.body.email}).select("-password");
+        res.status(201).send({msg:"valid"})
+    }catch(err){
+        res.status(500).send("Internal Server Error");
     }
 })
 module.exports = router;
