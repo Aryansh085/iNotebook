@@ -37,16 +37,37 @@ const NoteState = (props) =>{
         "class":"5b"
     }
     const[notes,setNotes] = useState(notesInitial)
-    // const update = ()=>{
-    //     setTimeout(()=>{
-    //         setState({
-    //             "name":"Aryansh",
-    //             "class":"16"
-    //         })
-    //     },1500)
-    // }
+
+    // Add a note
+    const addNote = (title, description,tag)=>{
+        const note= {
+            "_id": "65d07c8eb501394f4db4df11",
+            "user": "65cf991f7ea1c8543b4e4e09",
+            "title": title,
+            "description": description,
+            "tag": tag,
+            "date": "2024-02-17T08:52:24.005Z",
+            "__v": 0
+          };
+        
+        setNotes(notes.concat(note))
+    }
+
+    // Delete a note
+    const deleteNote = (id) =>{
+        console.log(`Deleting note with id ${id}`);
+        const newNotes = notes.filter((note)=>{
+            return note._id !==id
+        })
+        setNotes(newNotes)
+    }
+
+    // Edit a note
+    const editNote = (id) =>{
+
+    }
     return(
-        <NoteContext.Provider value = {{notes, setNotes}}>
+        <NoteContext.Provider value = {{notes, addNote, deleteNote,editNote}}>
             {props.children}
         </NoteContext.Provider>
     )
