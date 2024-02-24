@@ -17,14 +17,15 @@ router.post(
     body("password", "enter a valid password").isLength({ min: 6 }),
   ],
   async (req, res) => {
+    let success = false
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      return res.status(400).json({ success,errors: errors.array() });
     }
     try {
       let user = await User.findOne({ email: req.body.email });
       if (user != null) {
-        res.status(400).json({ error: "Sorry, the email already exists" });
+        res.status(400).json({ success,error: "Sorry, the email already exists" });
       }
       const salt = await bcrypt.genSalt(10);
 
@@ -40,9 +41,11 @@ router.post(
         }
       }
       const token = jwt.sign(data,JWT_SECRET);
-      res.status(201).json({token});
+      success = true
+      res.status(201).json({success,token});
     } catch (err) {
-      res.status(500).json({ error: "Some internal error occured." , error:err});
+      let success = false
+      res.status(500).json({ success, error: "Some internal error occured." , error:err});
     }
   }
 );
@@ -62,11 +65,13 @@ router.post("/login",[
     try{
         let user = await User.findOne({email:email})
         if(!user){
-            return res.status(400).json({error:"Check credentials"})
+          success = false
+            return res.status(400).json({success,error:"Check credentials"})
         }
         const passComp = await bcrypt.compare(password,user.password);
         if(!passComp){
-            return res.status(400).json({error:"Check credentials"})
+          success = false
+            return res.status(400).json({success,error:"Check credentials"})
         } 
         const data = {
             user:{
@@ -74,9 +79,11 @@ router.post("/login",[
             }
         }
         const token =  jwt.sign(data,JWT_SECRET);
-        return res.status(200).json({token})
+        success = true
+        return res.status(200).json({success,token})
     }catch(err){
-        return res.status(500).send({error:"Some internal server error occured"})
+        success = false
+        return res.status(500).send({success,error:"Some internal server error occured"})
     }
 })
 
